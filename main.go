@@ -134,6 +134,15 @@ func deleteFromMinio(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err := minioClient.RemoveObject(ctx, BUCKET_NAME, filename, minio.RemoveObjectOptions{})
+
+	if err != nil {
+		http.Error(w, "unable to delete file from minio bucket", http.StatusInternalServerError)
+		return
+	}
+
+	respondWithJson(w, http.StatusOK, map[string]string{
+		"message": fmt.Sprintf("File %s successfully deleted from minio bucket", filename),
+	})
 }
 
 func respondWithJson(w http.ResponseWriter, code int, payload interface{}) {
